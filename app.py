@@ -12,7 +12,7 @@ def compare_sentences(expected, actual):
     accuracy_score = matcher.ratio() * 100
     expected_len = len(expected)
     actual_len = len(actual)
-    matched_chars = sum(n for i, j, n in matcher.get_matching_blocks())
+    matched_chars = sum(n for _, _, n in matcher.get_matching_blocks())
     completeness_score = (matched_chars / expected_len * 100) if expected_len > 0 else 0
     length_diff = abs(expected_len - actual_len) / max(expected_len, actual_len) if max(expected_len, actual_len) > 0 else 0
     pronunciation_score = max(0, 100 - (length_diff * 50))
