@@ -4,154 +4,288 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🗣️ Bible Speech Practice</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="theme-color" content="#1e40af">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="icon" href="/static/icons/icon-192.png">
     <style>
-        body {
-            font-family: 'Inter', 'Arial', 'Noto Sans', sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
+
+        body {
+            background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: #1e40af;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.2);
+        }
+
         textarea {
+            min-height: 100px;
             resize: vertical;
         }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
         button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
             transition: transform 0.2s, background-color 0.2s;
         }
+
         button:hover {
-            transform: scale(1.05);
+            transform: translateY(-2px);
         }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #startButton {
+            background: #1e40af;
+            color: white;
+        }
+
+        #startButton:hover {
+            background: #1e3a8a;
+        }
+
+        #retryButton {
+            background: #3b82f6;
+            color: white;
+        }
+
+        #retryButton:hover {
+            background: #2563eb;
+        }
+
+        #clearButton {
+            background: #ef4444;
+            color: white;
+        }
+
+        #clearButton:hover {
+            background: #dc2626;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #transcription, #result, #error {
+            text-align: center;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            margin-top: 1rem;
+        }
+
+        #transcription {
+            color: #1e40af;
+        }
+
         #result {
+            color: #15803d;
+            font-weight: 600;
             white-space: pre-wrap;
+        }
+
+        #error {
+            color: #b91c1c;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+
+            h1 {
+                font-size: clamp(1.25rem, 4vw, 1.5rem);
+            }
+
+            button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center min-h-screen p-4 sm:p-6 md:p-8">
-    <div class="bg-white rounded-lg shadow-lg p-6 sm:p-8 w-full max-w-3xl">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-6">🗣️ Bible Speech Practice</h1>
-        <label for="sentenceInput" class="block text-sm sm:text-base font-medium text-gray-700 mb-2">
-            Enter a Bible verse in Tamil:
-        </label>
+<body>
+    <div class="container">
+        <h1>🗣️ Bible Speech Practice</h1>
+        <label for="languageSelect">Select Language:</label>
+        <select id="languageSelect">
+            <option value="ta-IN">Tamil (ta-IN)</option>
+            <option value="en-US">English (en-US)</option>
+        </select>
+        <label for="sentenceInput" class="mt-4">Enter a Bible verse :</label>
         <textarea
             id="sentenceInput"
             placeholder="Type your Bible verse here..."
-            class="w-full h-24 sm:h-32 p-4 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         ></textarea>
-        <div class="flex flex-wrap justify-center gap-4 mt-6">
-            <button
-                id="startButton"
-                class="bg-green-500 text-white px-6 py-3 rounded-md text-sm sm:text-base font-medium hover:bg-green-600"
-            >
-                🎤 Start Speaking
-            </button>
-            <button
-                id="retryButton"
-                class="bg-blue-500 text-white px-6 py-3 rounded-md text-sm sm:text-base font-medium hover:bg-blue-600 hidden"
-            >
-                🔁 Retry
-            </button>
-            <button
-                id="clearButton"
-                class="bg-red-500 text-white px-6 py-3 rounded-md text-sm sm:text-base font-medium hover:bg-red-600 hidden"
-            >
-                🧹 Clear Text
-            </button>
+        <div class="button-group">
+            <button id="startButton">🎤 Start Speaking</button>
+            <button id="retryButton" class="hidden">🔁 Retry</button>
+            <button id="clearButton" class="hidden">🧹 Clear Text</button>
         </div>
-        <div id="transcription" class="mt-6 text-blue-600 text-sm sm:text-base text-center"></div>
-        <div id="result" class="mt-4 text-green-700 font-semibold text-sm sm:text-base text-center"></div>
+        <div id="transcription"></div>
+        <div id="result"></div>
+        <div id="error" class="hidden"></div>
     </div>
 
     <script>
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'ta-IN';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.error('Service Worker error:', err));
+            });
+        }
 
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        const languageSelect = document.getElementById('languageSelect');
+        const sentenceInput = document.getElementById('sentenceInput');
         const startButton = document.getElementById('startButton');
         const retryButton = document.getElementById('retryButton');
         const clearButton = document.getElementById('clearButton');
-        const sentenceInput = document.getElementById('sentenceInput');
         const transcriptionDiv = document.getElementById('transcription');
         const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
 
-        function updateTranscription(text) {
-            transcriptionDiv.textContent = text;
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        function setLanguage() {
+            recognition.lang = languageSelect.value;
         }
 
-        function updateResult(text) {
-            resultDiv.textContent = text;
-        }
+        setLanguage();
+        languageSelect.addEventListener('change', setLanguage);
 
-        function showRecordingUI(show) {
-            document.querySelector('label').style.display = show ? 'block' : 'none';
-            sentenceInput.style.display = show ? 'block' : 'none';
-        }
-
-        function showRetryUI() {
-            retryButton.classList.remove('hidden');
-            clearButton.classList.remove('hidden');
-        }
-
-        function processSpeech() {
+        startButton.addEventListener('click', () => {
             const sentence = sentenceInput.value.trim();
             if (!sentence) {
-                alert('Please enter a sentence.');
+                errorDiv.textContent = 'Please enter a Bible verse or sentence.';
+                errorDiv.classList.remove('hidden');
                 return;
             }
-
+            errorDiv.classList.add('hidden');
             startButton.classList.add('hidden');
-            retryButton.classList.add('hidden');
-            clearButton.classList.add('hidden');
-            updateTranscription('');
-            updateResult('');
-            showRecordingUI(false);
-
-            updateTranscription('🎤 Listening... Speak clearly');
+            retryButton.classList.remove('hidden');
+            clearButton.classList.remove('hidden');
+            transcriptionDiv.textContent = 'Listening...';
+            resultDiv.textContent = '';
             recognition.start();
+        });
 
-            recognition.onresult = async (event) => {
-                const recognizedText = event.results[0][0].transcript;
-                updateTranscription('✅ Finished Listening.');
-
-                try {
-                    const response = await fetch('/process_speech', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            expected_sentence: sentence,
-                            recognized_text: recognizedText
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (data.error) {
-                        updateTranscription(data.transcription);
-                    } else {
-                        updateTranscription(data.transcription);
-                        updateResult(data.result);
-                    }
-                } catch (error) {
-                    updateTranscription(`⚠️ Error: ${error.message}`);
+        recognition.onresult = (event) => {
+            const recognizedText = event.results[0][0].transcript;
+            transcriptionDiv.textContent = `You said: ${recognizedText}`;
+            fetch('/process_speech', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    expected_sentence: sentenceInput.value,
+                    recognized_text: recognizedText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    errorDiv.textContent = data.transcription;
+                    errorDiv.classList.remove('hidden');
+                } else {
+                    transcriptionDiv.textContent = data.transcription;
+                    resultDiv.textContent = data.result;
                 }
+            })
+            .catch(error => {
+                errorDiv.textContent = 'Error processing speech. Please try again.';
+                errorDiv.classList.remove('hidden');
+            });
+            recognition.stop();
+        };
 
-                showRecordingUI(true);
-                showRetryUI();
-            };
+        recognition.onerror = (event) => {
+            errorDiv.textContent = `Speech recognition error: ${event.error}. Please check your microphone and try again.`;
+            errorDiv.classList.remove('hidden');
+            startButton.classList.remove('hidden');
+            retryButton.classList.add('hidden');
+            recognition.stop();
+        };
 
-            recognition.onerror = (event) => {
-                updateTranscription(`❌ Speech recognition error: ${event.error}`);
-                showRecordingUI(true);
-                showRetryUI();
-            };
+        recognition.onend = () => {
+            startButton.classList.remove('hidden');
+            retryButton.classList.add('hidden');
+        };
 
-            recognition.onend = () => {
-                recognition.stop();
-            };
-        }
+        retryButton.addEventListener('click', () => {
+            startButton.click();
+        });
 
-        startButton.addEventListener('click', processSpeech);
-        retryButton.addEventListener('click', processSpeech);
         clearButton.addEventListener('click', () => {
             sentenceInput.value = '';
-            updateTranscription('');
-            updateResult('');
+            transcriptionDiv.textContent = '';
+            resultDiv.textContent = '';
+            errorDiv.classList.add('hidden');
             startButton.classList.remove('hidden');
             retryButton.classList.add('hidden');
             clearButton.classList.add('hidden');
