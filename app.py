@@ -6,8 +6,10 @@ import os
 app = Flask(__name__)
 
 def compare_sentences(expected, actual):
+    # Normalize text to handle Tamil or other scripts
     expected = unicodedata.normalize('NFKC', expected.lower().strip())
     actual = unicodedata.normalize('NFKC', actual.lower().strip())
+    # Use difflib for similarity
     matcher = difflib.SequenceMatcher(None, expected, actual)
     accuracy_score = matcher.ratio() * 100
     expected_len = len(expected)
@@ -40,11 +42,10 @@ def process_speech():
             'transcription': 'Please provide both sentences.'
         }), 400
     score, feedback = compare_sentences(expected_sentence, recognized_text)
-    result = {
+    return jsonify({
         'transcription': f"You said: {recognized_text}",
         'result': f"{'✅ Well done!' if score >= 90 else '⚠️ Good try!'}\n{feedback}"
-    }
-    return jsonify(result)
+    })
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
