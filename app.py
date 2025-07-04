@@ -1,15 +1,14 @@
 from flask import Flask, request, jsonify, render_template
 import difflib
 import unicodedata
+import re
 import os
 
 app = Flask(__name__)
 
 def compare_sentences(expected, actual):
-    # Normalize text to handle Tamil or other scripts
-    expected = unicodedata.normalize('NFKC', expected.lower().strip())
-    actual = unicodedata.normalize('NFKC', actual.lower().strip())
-    # Use difflib for similarity
+    expected = re.sub(r'[^\w\s]', '', unicodedata.normalize('NFKC', expected.lower().strip()))
+    actual = re.sub(r'[^\w\s]', '', unicodedata.normalize('NFKC', actual.lower().strip()))
     matcher = difflib.SequenceMatcher(None, expected, actual)
     accuracy_score = matcher.ratio() * 100
     expected_len = len(expected)
